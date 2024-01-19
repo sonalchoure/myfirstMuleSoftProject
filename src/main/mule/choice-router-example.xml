@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="38a520b0-84ed-486a-b647-bd8f665f5785" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<flow name="choice-router-exampleFlow" doc:id="b4d9ece4-e339-41c7-8bd6-c8400ea5f0b4" >
+		<http:listener doc:name="Listener" doc:id="d2728eb1-a6d9-42be-87e4-1e73dbc03e00" config-ref="HTTP_Listener_config" path="/test" allowedMethods="Get"/>
+		<choice doc:name="Choice" doc:id="8511f113-119e-4f50-bf79-112a2a5c2dcf" >
+			<when expression="#[payload.color == 'Red']">
+				<logger level="INFO" doc:name="Logger" doc:id="a2a4e803-b2bf-445b-88d0-b325b13d944a" message="#['Color is Red']"/>
+			</when>
+			<when expression='#[payload.color == "Yellow"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="e508c586-f348-410e-b9d9-fdd18d40eff2" message="'Color is Yellow'"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="177cce84-bc0b-4224-968b-e2fee6025b07" message="#['Color other than red and yellow']"/>
+			</otherwise>
+		</choice>
+		<set-variable value="" doc:name="payload" doc:id="1924bbc3-45b9-43fb-a1c3-1278d5792fe9" variableName="payload"/>
+	</flow>
+	<flow name="choice-router-exampleFlow1" doc:id="e9997890-0a6c-4f63-8a61-5403487ef595" >
+		<http:listener doc:name="Listener" doc:id="550746cf-c251-4789-b6fd-c9923e1e4898" config-ref="HTTP_Listener_config" path="/choice" allowedMethods="Get"/>
+		<choice doc:name="Choice" doc:id="84948482-a549-4f16-93c2-92cbe7308d9a" >
+			<when expression='#[attributes.queryParams.state == "Active"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="f802e569-9f56-4073-9b31-17c823a3bf31" message='#["State is Active"]'/>
+			</when>
+			<when expression='#[attributes.queryParams.state == "Inactive"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="c8f6b176-4009-4083-959a-5d4ca7a61cce" message='"State is Inactive"'/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="fa516788-20fe-4540-ac6d-f37699d20dba" message='"State is neither Active nor Inactive"'/>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="choice-router-exampleFlow2" doc:id="f1341616-f73a-42f6-a4d1-76d09303d88d" >
+		<http:listener doc:name="Listener" doc:id="692f0528-c501-4407-b91e-b15173610abd" config-ref="HTTP_Listener_config" path="/test"/>
+		<choice doc:name="Choice" doc:id="d936a8c1-76f9-4c6c-a1fc-34ed10e98cbd" >
+			<when expression='#[attributes.queryParams.choice == "1"]'>
+				<set-payload value='#["Try to print choice 1"]' doc:name="Set Payload" doc:id="c6a5e781-a43e-4da8-b4df-83bfae571064" />
+			</when>
+			<when expression='attributes.queryParams.choice == "2"'>
+				<set-payload value='#["Try to print choice 2"]' doc:name="Set Payload" doc:id="c10a314d-c008-4c04-9f4d-d0c5553c4342" />
+			</when>
+			<otherwise >
+				<set-payload value='#["Other Choice"]' doc:name="Set Payload" doc:id="fe5c7136-a4d9-4c29-a009-f833ca261098" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
